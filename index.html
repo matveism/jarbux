@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
+  <title>EasyCoin Terminal | Industrial CE 2007</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* FIXED BOTTOM NAVIGATION FIX — ensures mobile nav stays at bottom on all devices */
+    html, body {
+      height: 100%;
+      background: black;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: lightblue;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* Main app container uses flex column to push footer down naturally */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      background: gray;
+      border: 1px solid #2a313c;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+
+    /* Main layout takes remaining space */
+    .main-layout {
+      display: flex;
+      flex: 1;
+      min-height: 0; /* flex overflow fix */
+    }
+
+    button {
+      background: #1a212c;
+      border: 1px solid #3a4453;
+      color: #d6e3ef;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.08s linear;
+    }
+    button:hover { background: #26303f; border-color: #5f7f9e; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .panel {
+      background: #11161f;
+      border: 1px solid #2a313c;
+      border-radius: 2px;
+      padding: 22px 24px;
+    }
+    .panel-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      color: #d6e3ef;
+      border-left: 3px solid #5f7f9e;
+      padding-left: 12px;
+    }
+    .industrial-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .metric-card {
+      background: #0c0f16;
+      border: 1px solid #2a313c;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .metric-value {
+      font-family: 'Courier New', monospace;
+      font-size: 1.7rem;
+      font-weight: bold;
+      color: #7c9ec2;
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #8e9eae;
+      margin-top: 6px;
+    }
+    .quiz-card {
+      background: #0c0f16;
+      border: 1px solid #3a4453;
+      border-radius: 2px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .quiz-question {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #d6e3ef;
+    }
+    .quiz-input {
+      background: #06080c;
+      border: 1px solid #3a4453;
+      color: #d6e3ef;
+      padding: 8px 12px;
+      width: 100%;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .quiz-input:focus { border-color: #5f7f9e; }
+    .quiz-result {
+      margin-top: 16px;
+      padding: 12px;
+      background: #0a0e14;
+      border-left: 3px solid #facc15;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .submit-btn {
+      margin-top: 4px;
+      background: #162030;
+      border-color: #5f7f9e;
+      color: #a8d0ef;
+      padding: 8px 24px;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+    .submit-btn:hover { background: #1e2f45; }
+    .top-header {
+      background: #0f141e;
+      border-bottom: 1px solid #2a313c;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand { font-size: 18px; font-weight: bold; color: #d6e3ef; letter-spacing: 0.05em; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .balance-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0c0f16;
+      padding: 6px 18px;
+      border: 1px solid #2a313c;
+    }
+    .balance {
+      font-weight: 700;
+      color: #facc15;
+      font-family: 'Courier New', monospace;
+      font-size: 1.2rem;
+    }
+    .user-icon-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .user-svg-icon {
+      width: 40px;
+      height: 40px;
+      background: #0c0f16;
+      border: 2px solid #facc15;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .level-badge {
+      background: #facc15;
+      color: #0a0c12;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 1px 7px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #0c0f16;
+      border-right: 1px solid #2a313c;
+      padding: 20px 0;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      margin: 4px 0;
+      color: #9aabbb;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.08s linear;
+      user-select: none;
+    }
+    .nav-item:hover { background: #11161f; color: #c8dcea; }
+    .nav-item.active { background: #11161f; color: #e0ecf5; border-left-color: #facc15; }
+    .content { flex: 1; padding: 28px; overflow: auto; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .ce-alert {
+      background: #1a2230;
+      border-left: 4px solid #5f7f9e;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      color: #9aabbb;
+      margin-top: 8px;
+    }
+    .ce-success { background: #1a2a1a; border-left-color: #7e9e5f; color: #9ec87e; }
+    .ce-error   { background: #2a1a1a; border-left-color: #e03060; color: #e08090; }
+    .ce-warning { background: #2a2210; border-left-color: #facc15; color: #d4b840; }
+    .ce-statusbar {
+      background: #0c0f16;
+      border-top: 1px solid #2a313c;
+      padding: 6px 24px;
+      font-size: 0.68rem;
+      display: flex;
+      justify-content: space-between;
+      color: #6a7a8a;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    /* LEADERBOARD */
+    .lb-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 90px 80px;
+      padding: 9px 12px;
+      border-bottom: 1px solid #1e2530;
+      font-size: 0.82rem;
+      align-items: center;
+    }
+    .lb-header {
+      background: #0c0f16;
+      color: #6a7a8a;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid #2a313c;
+    }
+    .lb-rank  { font-family: 'Courier New', monospace; color: #facc15; font-weight: bold; }
+    .lb-stars { font-family: 'Courier New', monospace; color: #7c9ec2; text-align: right; }
+    .lb-acc   { font-size: 0.75rem; color: #8e9eae; text-align: right; }
+    .lb-self  { background: #141c28; }
+    /* SHOP */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .shop-card {
+      background: #0c0f16;
+      border: 1px solid #2a313c;
+      padding: 18px 16px;
+      text-align: center;
+      position: relative;
+    }
+    .shop-price { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: bold; color: #facc15; margin-bottom: 6px; }
+    .shop-name  { font-size: 0.85rem; color: #d6e3ef; margin-bottom: 4px; }
+    .shop-cost  { font-size: 0.75rem; color: #8e9eae; margin-bottom: 14px; }
+    .shop-btn   { width: 100%; background: #162030; border-color: #5f7f9e; color: #a8d0ef; padding: 7px; }
+    .shop-btn:hover { background: #1e2f45; }
+    .shop-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: #facc15; color: #0a0c12;
+      font-size: 9px; font-weight: bold;
+      padding: 2px 6px; border-radius: 2px;
+    }
+    .shop-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6a7a8a;
+      font-size: 0.85rem;
+    }
+    /* PROMO */
+    .promo-box {
+      background: #0c0f16;
+      border: 1px solid #3a4453;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .promo-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #d6e3ef;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .promo-row { display: flex; gap: 10px; align-items: center; }
+    .promo-input {
+      flex: 1;
+      background: #06080c;
+      border: 1px solid #3a4453;
+      color: #facc15;
+      padding: 9px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      outline: none;
+      letter-spacing: 0.1em;
+    }
+    .promo-input:focus { border-color: #5f7f9e; }
+    .promo-btn {
+      background: #1a2a1a;
+      border-color: #7e9e5f;
+      color: #9ec87e;
+      padding: 9px 20px;
+      font-size: 0.82rem;
+    }
+    .promo-btn:hover { background: #223322; }
+    /* PROFILE */
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e2530;
+      font-size: 0.85rem;
+    }
+    .profile-label { color: #6a7a8a; }
+    .profile-value { color: #d6e3ef; font-family: 'Courier New', monospace; }
+    .status-active  { color: #7e9e5f; }
+    .status-warning { color: #facc15; }
+    .status-locked  { color: #e03060; }
+    
+    /* --- MOBILE FIXED BOTTOM NAVIGATION (ALWAYS ON BOTTOM) --- */
+    .mobile-nav {
+      display: none;
+      background: #0c0f16;
+      border-top: 1px solid #2a313c;
+      width: 100%;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav-item {
+      flex: 1; 
+      text-align: center;
+      padding: 10px 4px;
+      font-size: 0.7rem; 
+      color: #6a7a8a;
+      cursor: pointer; 
+      border-top: 2px solid transparent;
+      transition: all 0.08s linear;
+    }
+    .mobile-nav-item.active { 
+      color: #facc15; 
+      border-top-color: #facc15;
+      background: #11161f;
+    }
+    .mobile-nav-icon { 
+      font-size: 1.3rem; 
+      margin-bottom: 4px;
+      display: block;
+    }
+    
+    /* Media query: on mobile, sidebar hidden, mobile-nav becomes flex and sticks to bottom */
+    @media (max-width: 760px) {
+      body { padding: 0; }
+      .app-container { 
+        border: none; 
+        box-shadow: none;
+        min-height: 100vh;
+        border-radius: 0;
+      }
+      .sidebar { display: none; }
+      .content { padding: 16px 16px 24px 16px; }
+      .mobile-nav { 
+        display: flex; 
+        position: sticky;
+        bottom: 0;
+        background: #0c0f16;
+        z-index: 100;
+        width: 100%;
+      }
+      .industrial-metrics { grid-template-columns: 1fr 1fr; }
+      .top-header { padding: 10px 16px; }
+      .ce-statusbar { font-size: 0.6rem; padding: 4px 16px; }
+      .lb-row { grid-template-columns: 40px 1fr 80px; }
+      .lb-acc { display: none; }
+      .promo-row { flex-direction: column; }
+      .promo-input, .promo-btn { width: 100%; }
+    }
+    
+    @media (max-width: 480px) {
+      .ce-statusbar span:first-child { display: none; }
+      .mobile-nav-item { font-size: 0.65rem; padding: 8px 4px; }
+      .mobile-nav-icon { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+
+  <!-- HEADER -->
+  <header class="top-header">
+    <div class="brand">JarBux</div>
+    <div class="header-right">
+      <div class="balance-box">
+        <span class="balance" id="userBalance">0.00</span>
+        <span style="font-size:11px; color:#6a7a8a;">STARS</span>
+      </div>
+      <div class="user-icon-wrapper">
+        <div class="user-svg-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </div>
+        <div class="level-badge" id="levelBadge">Lv.1</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="main-layout">
+    <!-- SIDEBAR (DESKTOP) -->
+    <aside class="sidebar">
+      <div class="nav-item active" data-target="earn">
+        <span class="nav-icon">⚡</span>
+        EARN
+      </div>
+      <div class="nav-item" data-target="shop">
+        <span class="nav-icon">🛒</span>
+        SHOP
+      </div>
+      <div class="nav-item" data-target="leaders">
+        <span class="nav-icon">🏆</span>
+        LEADERS
+      </div>
+      <div class="nav-item" data-target="profile">
+        <span class="nav-icon">👤</span>
+        PROFILE
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <!-- EARN -->
+      <div class="section active" id="section-earn">
+        <div class="panel">
+          <div class="panel-title">▶ QUIZ TERMINAL</div>
+
+          <div class="industrial-metrics">
+            <div class="metric-card">
+              <div class="metric-value" id="starBalance">0</div>
+              <div class="metric-label">Stars Balance</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value" id="quizCount">0</div>
+              <div class="metric-label">Quizzes Done</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value" id="accuracyValue">—</div>
+              <div class="metric-label">Accuracy</div>
+            </div>
+          </div>
+
+          <div id="quizContainer">
+            <div class="ce-alert">🔐 Please login to access quiz terminal</div>
+            <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOP -->
+      <div class="section" id="section-shop">
+        <div class="panel">
+          <div class="panel-title">🛒 REWARD EXCHANGE</div>
+          <div id="shopFeedback" style="min-height:24px;"></div>
+          <div id="shopGrid" class="shop-loading">⟳ Loading rewards...</div>
+
+          <div class="promo-box">
+            <div class="promo-title">🎟 Redeem Promo Code</div>
+            <div class="promo-row">
+              <input type="text" id="promoInput" class="promo-input" placeholder="ENTER CODE..." maxlength="32" autocomplete="off" spellcheck="false">
+              <button class="promo-btn" id="promoBtn">APPLY CODE</button>
+            </div>
+            <div id="promoFeedback" style="margin-top:10px; font-size:0.8rem;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERS -->
+      <div class="section" id="section-leaders">
+        <div class="panel">
+          <div class="panel-title">🏆 LEADERBOARD</div>
+          <div id="leaderboardContainer"><div class="ce-alert">Login to see leaderboard</div></div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="section" id="section-profile">
+        <div class="panel">
+          <div class="panel-title">👤 OPERATOR PROFILE</div>
+          <div class="profile-row"><span class="profile-label">USER ID</span><span class="profile-value" id="profileName">—</span></div>
+          <div class="profile-row"><span class="profile-label">STATUS</span><span class="profile-value" id="profileStatus">—</span></div>
+          <div class="profile-row"><span class="profile-label">BALANCE</span><span class="profile-value" id="profileBalance">—</span></div>
+          <div class="profile-row"><span class="profile-label">CORRECT</span><span class="profile-value" id="profileCorrect">—</span></div>
+          <div class="profile-row"><span class="profile-label">WRONG</span><span class="profile-value" id="profileWrong">—</span></div>
+          <div class="profile-row"><span class="profile-label">ACCURACY</span><span class="profile-value" id="profileAccuracy">—</span></div>
+          <div class="profile-row"><span class="profile-label">LEVEL</span><span class="profile-value" id="profileLevel">—</span></div>
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="refreshBtn" style="display:none;">↻ REFRESH DATA</button>
+            <button id="logoutBtn" style="background:#2a1a1a; border-color:#e03060; color:#e08090; display:none;">⏻ SIGN OUT</button>
+            <button id="loginBtnProfile">LOGIN TO TERMINAL</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION (FIXED AT BOTTOM) -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-item active" data-target="earn">
+      <div class="mobile-nav-icon">⚡</div>
+      <span>EARN</span>
+    </div>
+    <div class="mobile-nav-item" data-target="shop">
+      <div class="mobile-nav-icon">🛒</div>
+      <span>SHOP</span>
+    </div>
+    <div class="mobile-nav-item" data-target="leaders">
+      <div class="mobile-nav-icon">🏆</div>
+      <span>LEADERS</span>
+    </div>
+    <div class="mobile-nav-item" data-target="profile">
+      <div class="mobile-nav-icon">👤</div>
+      <span>PROFILE</span>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="ce-statusbar">
+    <span>© EasyCoin INDUSTRIAL CE 2007</span>
+    <span>⚡ CONNECTION: SECURE</span>
+    <span id="liveClock"></span>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRQw1hO48Q7UlFDKZOPaxne7qoKxRDY26FqVTOoADsxz7xaa_Lktpb-Xvuh51Nj_2x/exec";
+const REWARD_PER_CORRECT = 1 / 3;
+
+// ============================================================
+// STATE
+// ============================================================
+let currentUser = null;
+let currentQuiz  = null;
+let userData     = { stars: 0, quizzes: 0, correct: 0, wrong: 0, status: 'Active' };
+
+// ============================================================
+// UTILS
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function calcAccuracy(c, w) {
+  return (c + w) === 0 ? null : Math.round(c / (c + w) * 100);
+}
+function calcLevel(q) { return Math.floor(q / 5) + 1; }
+function calcStatus(acc) {
+  if (acc === null) return 'Active';
+  if (acc < 30) return 'Locked';
+  if (acc < 60) return 'Warning';
+  return 'Active';
+}
+function showFeedback(elId, msg, type = '') {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.className = 'ce-alert' + (type ? ' ce-' + type : '');
+  el.style.display = 'block';
+  el.innerHTML = msg;
+  if (type !== 'error') setTimeout(() => { el.style.display = 'none'; }, 4500);
+}
+
+// ============================================================
+// API
+// ============================================================
+async function api(action, data = {}) {
+  const params = new URLSearchParams({ action, data: JSON.stringify(data) });
+  const res = await fetch(`${APPS_SCRIPT_URL}?${params}`);
+  return res.json();
+}
+
+// ============================================================
+// UI
+// ============================================================
+function updateUI() {
+  const acc   = calcAccuracy(userData.correct, userData.wrong);
+  const level = calcLevel(userData.quizzes);
+
+  document.getElementById('userBalance').textContent   = userData.stars.toFixed(2);
+  document.getElementById('starBalance').textContent   = Math.floor(userData.stars);
+  document.getElementById('quizCount').textContent     = userData.quizzes;
+  document.getElementById('accuracyValue').textContent = acc !== null ? acc + '%' : '—';
+  document.getElementById('levelBadge').textContent    = 'Lv.' + level;
+
+  if (currentUser) {
+    document.getElementById('profileName').textContent    = currentUser.UserID;
+    document.getElementById('profileBalance').textContent = userData.stars.toFixed(2) + ' ⭐';
+    document.getElementById('profileCorrect').textContent = userData.correct;
+    document.getElementById('profileWrong').textContent   = userData.wrong;
+    document.getElementById('profileAccuracy').textContent = acc !== null ? acc + '%' : 'N/A';
+    document.getElementById('profileLevel').textContent   = 'Level ' + level;
+    const sEl = document.getElementById('profileStatus');
+    sEl.textContent = userData.status;
+    sEl.className   = 'profile-value status-' + userData.status.toLowerCase();
+    const logoutBtn = document.getElementById('logoutBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const loginBtnProfile = document.getElementById('loginBtnProfile');
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    if (refreshBtn) refreshBtn.style.display = 'inline-block';
+    if (loginBtnProfile) loginBtnProfile.style.display = 'none';
+  } else {
+    ['profileName','profileBalance','profileCorrect','profileWrong','profileAccuracy','profileLevel','profileStatus']
+      .forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; });
+    const logoutBtn = document.getElementById('logoutBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const loginBtnProfile = document.getElementById('loginBtnProfile');
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (refreshBtn) refreshBtn.style.display = 'none';
+    if (loginBtnProfile) loginBtnProfile.style.display = 'inline-block';
+  }
+}
+
+// ============================================================
+// LOGIN / LOGOUT
+// ============================================================
+async function doLogin() {
+  const uid = prompt('Enter User ID:');
+  if (!uid || !uid.trim()) return;
+  const pwd = prompt('Enter Password:');
+  if (pwd === null) return;
+
+  const quizContainer = document.getElementById('quizContainer');
+  if (quizContainer) quizContainer.innerHTML = '<div class="ce-alert">⟳ Authenticating...</div>';
+
+  const result = await api('getLogin');
+  if (!result.success) {
+    if (quizContainer) {
+      quizContainer.innerHTML = `<div class="ce-alert ce-error">❌ Server error: ${escapeHtml(result.error)}</div>
+       <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
+    }
+    bindLoginBtn(); return;
+  }
+
+  const found = (result.users || []).find(u =>
+    String(u.UserID).trim() === uid.trim() &&
+    String(u.Password).trim() === pwd.trim()
+  );
+
+  if (!found) {
+    if (quizContainer) {
+      quizContainer.innerHTML = `<div class="ce-alert ce-error">❌ Invalid credentials</div>
+       <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
+    }
+    bindLoginBtn(); return;
+  }
+
+  if ((found.Status || 'Active') === 'Locked') {
+    if (quizContainer) {
+      quizContainer.innerHTML = `<div class="ce-alert ce-error">🔒 Account LOCKED. Contact support.</div>
+       <button id="loginBtn" style="margin-top:12px;">TRY AGAIN</button>`;
+    }
+    bindLoginBtn(); return;
+  }
+
+  currentUser = { UserID: String(found.UserID).trim(), Status: found.Status || 'Active' };
+  userData = {
+    stars:   parseFloat(found.Balance)  || 0,
+    correct: parseInt(found.Correct)    || 0,
+    wrong:   parseInt(found.Wrong)      || 0,
+    quizzes: Math.round(((parseInt(found.Correct)||0) + (parseInt(found.Wrong)||0)) / 3),
+    status:  found.Status || 'Active'
+  };
+
+  updateUI();
+  loadQuiz();
+  loadLeaderboard();
+  loadShop();
+}
+
+function doLogout() {
+  currentUser = null; currentQuiz = null;
+  userData = { stars: 0, quizzes: 0, correct: 0, wrong: 0, status: 'Active' };
+  updateUI();
+  const quizContainer = document.getElementById('quizContainer');
+  if (quizContainer) {
+    quizContainer.innerHTML = `<div class="ce-alert">🔐 Please login to access quiz terminal</div>
+     <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
+  }
+  bindLoginBtn();
+  const leaderboardContainer = document.getElementById('leaderboardContainer');
+  if (leaderboardContainer) leaderboardContainer.innerHTML = '<div class="ce-alert">Login to see leaderboard</div>';
+  const shopGrid = document.getElementById('shopGrid');
+  if (shopGrid) {
+    shopGrid.className = 'shop-loading';
+    shopGrid.innerHTML = '⟳ Loading rewards...';
+  }
+}
+
+async function doRefresh() {
+  if (!currentUser) return;
+  const result = await api('refreshUser', { userId: currentUser.UserID });
+  if (result.success && result.user) {
+    const u = result.user;
+    userData = {
+      stars:   parseFloat(u.Balance)  || 0,
+      correct: parseInt(u.Correct)    || 0,
+      wrong:   parseInt(u.Wrong)      || 0,
+      quizzes: Math.round(((parseInt(u.Correct)||0)+(parseInt(u.Wrong)||0))/3),
+      status:  u.Status || 'Active'
+    };
+    updateUI();
+    showFeedback('shopFeedback', '✓ Data refreshed', 'success');
+  }
+}
+
+// ============================================================
+// SHOP
+// ============================================================
+async function loadShop() {
+  const grid = document.getElementById('shopGrid');
+  if (!grid) return;
+  grid.className = 'shop-loading';
+  grid.innerHTML = '⟳ Loading rewards...';
+
+  const result = await api('getCashout');
+
+  if (!result.success || !result.rewards || result.rewards.length === 0) {
+    grid.className = '';
+    grid.innerHTML = '<div class="ce-alert">No rewards available right now</div>';
+    return;
+  }
+
+  grid.className = 'shop-grid';
+  grid.innerHTML = result.rewards.map(r => {
+    const cost   = parseFloat(r.Cost || r.cost || 0);
+    const name   = escapeHtml(r.Name || r.name || 'Reward');
+    const label  = escapeHtml(r.Label || r.label || r.Value || r.value || '');
+    const badge  = r.Badge || r.badge || '';
+    return `
+      <div class="shop-card">
+        ${badge ? `<div class="shop-badge">${escapeHtml(badge)}</div>` : ''}
+        <div class="shop-price">${label}</div>
+        <div class="shop-name">${name}</div>
+        <div class="shop-cost">${cost} STARS</div>
+        <button class="shop-btn" data-redeem="${cost}" data-name="${name}">Redeem</button>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.shop-btn').forEach(btn => btn.addEventListener('click', handleRedeem));
+}
+
+async function handleRedeem(e) {
+  const btn  = e.currentTarget;
+  const cost = parseFloat(btn.dataset.redeem);
+  const name = btn.dataset.name;
+  if (!currentUser) { showFeedback('shopFeedback', '🔐 Please login first', 'error'); return; }
+  if (userData.stars < cost) {
+    showFeedback('shopFeedback', `❌ Need ${cost} STARS — you have ${Math.floor(userData.stars)}`, 'error');
+    return;
+  }
+  if (!confirm(`Redeem ${name} for ${cost} STARS?`)) return;
+
+  btn.disabled = true;
+  const newBalance = userData.stars - cost;
+  const result = await api('updateBalance', { userId: currentUser.UserID, newBalance });
+  btn.disabled = false;
+
+  if (result.success) {
+    userData.stars = newBalance;
+    updateUI();
+    showFeedback('shopFeedback', `✅ ${name} redeemed! New balance: ${newBalance.toFixed(2)} STARS`, 'success');
+  } else {
+    showFeedback('shopFeedback', '❌ Redemption failed — try again', 'error');
+  }
+}
+
+// PROMO CODE
+const promoBtn = document.getElementById('promoBtn');
+if (promoBtn) promoBtn.addEventListener('click', redeemPromo);
+const promoInput = document.getElementById('promoInput');
+if (promoInput) promoInput.addEventListener('keydown', e => { if (e.key === 'Enter') redeemPromo(); });
+
+async function redeemPromo() {
+  if (!currentUser) { showFeedback('promoFeedback', '🔐 Login first to redeem a promo code', 'error'); return; }
+  const input = document.getElementById('promoInput');
+  if (!input) return;
+  const code  = input.value.trim().toUpperCase();
+  if (!code) { showFeedback('promoFeedback', '⚠ Enter a promo code first', 'warning'); return; }
+  const btn = document.getElementById('promoBtn');
+  if (btn) {
+    btn.disabled = true; 
+    btn.textContent = '⟳ Checking...';
+  }
+  const result = await api('redeemPromo', { userId: currentUser.UserID, code });
+  if (btn) {
+    btn.disabled = false; 
+    btn.textContent = 'APPLY CODE';
+  }
+  if (result.success) {
+    const earned = parseFloat(result.earned || 0);
+    userData.stars += earned;
+    updateUI();
+    input.value = '';
+    showFeedback('promoFeedback', `🎉 Code ${escapeHtml(code)} accepted! +${earned.toFixed(2)} STARS added.`, 'success');
+  } else {
+    showFeedback('promoFeedback', `❌ ${escapeHtml(result.error || 'Invalid or already used promo code')}`, 'error');
+  }
+}
+
+// QUIZ
+async function loadQuiz() {
+  if (!currentUser) return;
+  const container = document.getElementById('quizContainer');
+  if (!container) return;
+  container.innerHTML = '<div class="ce-alert">⟳ Loading quiz...</div>';
+  const result = await api('getQuiz', { userId: currentUser.UserID });
+  if (!result.success) {
+    container.innerHTML = `<div class="ce-alert ce-warning">🏆 ${escapeHtml(result.message || 'No quizzes available')}</div><button id="reloadQuizBtn" style="margin-top:12px;">↻ CHECK AGAIN</button>`;
+    document.getElementById('reloadQuizBtn')?.addEventListener('click', loadQuiz);
+    return;
+  }
+  currentQuiz = result.quiz;
+  container.innerHTML = `
+    <div class="quiz-card"><div class="quiz-question">Q1 — ${escapeHtml(currentQuiz.q1)}</div><input type="text" id="quizAns1" class="quiz-input" placeholder="Your answer..." autocomplete="off"></div>
+    <div class="quiz-card"><div class="quiz-question">Q2 — ${escapeHtml(currentQuiz.q2)}</div><input type="text" id="quizAns2" class="quiz-input" placeholder="Your answer..." autocomplete="off"></div>
+    <div class="quiz-card"><div class="quiz-question">Q3 — ${escapeHtml(currentQuiz.q3)}</div><input type="text" id="quizAns3" class="quiz-input" placeholder="Your answer..." autocomplete="off"></div>
+    <button class="submit-btn" id="submitQuizBtn">▶ SUBMIT QUIZ</button>
+    <div id="quizResultArea" class="quiz-result" style="display:none;"></div>`;
+  document.getElementById('submitQuizBtn')?.addEventListener('click', submitQuiz);
+}
+
+async function submitQuiz() {
+  if (!currentUser || !currentQuiz) return;
+  const btn = document.getElementById('submitQuizBtn');
+  if (btn) {
+    btn.disabled = true; 
+    btn.textContent = '⟳ Submitting...';
+  }
+  const a1 = (document.getElementById('quizAns1')?.value || '').trim().toLowerCase();
+  const a2 = (document.getElementById('quizAns2')?.value || '').trim().toLowerCase();
+  const a3 = (document.getElementById('quizAns3')?.value || '').trim().toLowerCase();
+  const c1 = a1 === (currentQuiz.a1||'').toLowerCase();
+  const c2 = a2 === (currentQuiz.a2||'').toLowerCase();
+  const c3 = a3 === (currentQuiz.a3||'').toLowerCase();
+  const correctCount = (c1?1:0)+(c2?1:0)+(c3?1:0);
+  const earned = correctCount * REWARD_PER_CORRECT;
+  const newCorrectTotal = userData.correct + correctCount;
+  const newWrongTotal   = userData.wrong + (3 - correctCount);
+  const newBalance = userData.stars + earned;
+  const acc = calcAccuracy(newCorrectTotal, newWrongTotal);
+  const newStatus = calcStatus(acc);
+  const result = await api('submitQuiz', { userId: currentUser.UserID, quizRowNum: currentQuiz.rowNum, correctCount, earned, newCorrectTotal, newWrongTotal, newBalance, newStatus });
+  if (!result.success) { 
+    if (btn) {
+      btn.disabled=false; 
+      btn.textContent='▶ SUBMIT QUIZ';
+    }
+    return; 
+  }
+  userData.stars=newBalance; 
+  userData.correct=newCorrectTotal; 
+  userData.wrong=newWrongTotal; 
+  userData.quizzes=Math.round((newCorrectTotal+newWrongTotal)/3); 
+  userData.status=newStatus;
+  updateUI(); 
+  loadLeaderboard();
+  const rd = document.getElementById('quizResultArea');
+  if (rd) {
+    rd.style.display='block'; 
+    rd.innerHTML=`<strong>RESULT: ${correctCount}/3 CORRECT</strong><br>+${earned.toFixed(2)} STARS | Balance: ${newBalance.toFixed(2)}`;
+  }
+  ['quizAns1','quizAns2','quizAns3'].forEach(id=>{let el=document.getElementById(id); if(el) el.disabled=true;});
+  setTimeout(loadQuiz,3000);
+}
+
+async function loadLeaderboard() { 
+  if(!currentUser) return; 
+  const c=document.getElementById('leaderboardContainer'); 
+  if(!c) return;
+  c.innerHTML='<div class="ce-alert">⟳ Loading...</div>'; 
+  const result=await api('getLeaderboard'); 
+  if(!result.success||!result.leaderboard){
+    c.innerHTML='<div class="ce-alert ce-error">❌ Failed</div>';
+    return;
+  } 
+  c.innerHTML=`<div class="lb-row lb-header"><span>RANK</span><span>USER</span><span>STARS</span><span>ACC</span></div>${result.leaderboard.map(u=>{const acc=calcAccuracy(u.correct,u.wrong); return `<div class="lb-row${u.userId===currentUser.UserID?' lb-self':''}"><span class="lb-rank">#${u.rank}</span><span>${escapeHtml(u.userId)}${u.userId===currentUser.UserID?' <span style="color:#facc15;font-size:0.7rem;">◀ YOU</span>':''}</span><span class="lb-stars">${Math.floor(u.stars)} ⭐</span><span class="lb-acc">${acc!==null?acc+'%':'—'}</span></div>`; }).join('')}`;
+}
+
+function navigateTo(target) { 
+  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n=>n.classList.toggle('active', n.dataset.target===target)); 
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); 
+  const sec = document.getElementById('section-'+target);
+  if (sec) sec.classList.add('active'); 
+  if(target==='leaders'&&currentUser) loadLeaderboard(); 
+  if(target==='shop'&&currentUser) {
+    const shopGrid = document.getElementById('shopGrid');
+    if (shopGrid && shopGrid.classList.contains('shop-loading')) loadShop();
+  }
+}
+
+document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item=>item.addEventListener('click',()=>navigateTo(item.dataset.target)));
+
+function bindLoginBtn(){
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) loginBtn.addEventListener('click', doLogin);
+}
+
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+const refreshBtn = document.getElementById('refreshBtn');
+if (refreshBtn) refreshBtn.addEventListener('click', doRefresh);
+const loginBtnProfile = document.getElementById('loginBtnProfile');
+if (loginBtnProfile) loginBtnProfile.addEventListener('click', doLogin);
+
+bindLoginBtn();
+
+function updateClock(){
+  const clock = document.getElementById('liveClock');
+  if (clock) clock.textContent = new Date().toUTCString().replace('GMT','UTC').slice(0,25);
+}
+setInterval(updateClock,1000); 
+updateClock(); 
+updateUI();
+</script>
+</body>
+</html>
