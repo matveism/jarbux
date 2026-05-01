@@ -602,6 +602,10 @@ window.addEventListener('load', function() {
   }
 });
 
+function showLockedPopup(message) {
+  alert(message);
+}
+
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/[&<>"']/g, m =>
@@ -696,6 +700,19 @@ async function doLogin() {
        <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
     }
     bindLoginBtn(); return;
+  }
+
+  // CHECK ACCOUNT STATUS - BLOCKED IF LOCKED
+  const userStatus = (found.Status || 'Active').toLowerCase();
+  if (userStatus === 'locked') {
+    // Show popup error and prevent login
+    showLockedPopup("ACCOUNT LOCKED: Your account has been locked due to low accuracy (below 30%). Access denied. Contact support for reinstatement.");
+    if (quizContainer) {
+      quizContainer.innerHTML = `<div class="ce-alert ce-error">[LOCKED] Account is locked. Access denied.</div>
+       <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
+    }
+    bindLoginBtn();
+    return;
   }
 
   currentUser = { UserID: String(found.UserID).trim(), Status: found.Status || 'Active' };
@@ -913,7 +930,8 @@ async function submitQuiz() {
   const newCorrectTotal = userData.correct + correctCount;
   const newWrongTotal = userData.wrong + (3 - correctCount);
   const newBalance = userData.stars + earned;
-  const newStatus = (calcAccuracy(newCorrectTotal, newWrongTotal) !== null && calcAccuracy(newCorrectTotal, newWrongTotal) < 30) ? 'Locked' : ((calcAccuracy(newCorrectTotal, newWrongTotal) !== null && calcAccuracy(newCorrectTotal, newWrongTotal) < 60) ? 'Warning' : 'Active');
+  const newAccuracy = calcAccuracy(newCorrectTotal, newWrongTotal);
+  const newStatus = (newAccuracy !== null && newAccuracy < 30) ? 'Locked' : ((newAccuracy !== null && newAccuracy < 60) ? 'Warning' : 'Active');
   const result = await api('submitQuiz', { userId: currentUser.UserID, quizRowNum: currentQuiz.rowNum, correctCount, earned, newCorrectTotal, newWrongTotal, newBalance, newStatus: newStatus });
   if (!result.success) { 
     if (btn) {
@@ -936,6 +954,14 @@ async function submitQuiz() {
     rd.innerHTML = `<strong>RESULT: ${correctCount}/3 CORRECT</strong><br>+${earned.toFixed(2)} STARS | NEW BALANCE: ${newBalance.toFixed(2)}`;
     rd.className = 'quiz-result ce-success';
   }
+  
+  // If account just became locked, show popup and force logout
+  if (newStatus === 'Locked') {
+    showLockedPopup("WARNING: Your accuracy has dropped below 30%. Your account is now LOCKED. You will be logged out and cannot log back in until reinstated.");
+    doLogout();
+    return;
+  }
+  
   ['quizAns1','quizAns2','quizAns3'].forEach(id => { let el = document.getElementById(id); if(el) el.disabled = true; });
   setTimeout(() => { loadQuiz(); }, 3000);
 }
