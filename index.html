@@ -140,14 +140,14 @@
     color: var(--text-dim);
   }
 
-  .brand {
-    font-size: 20px;
-    font-weight: 800;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .brand-logo {
+    height: 42px;
+    width: auto;
+    filter: drop-shadow(0 0 4px rgba(250,139,56,0.5));
+    transition: transform 0.2s ease;
+  }
+  .brand-logo:hover {
+    transform: scale(1.02);
   }
 
   .nav-item {
@@ -444,6 +444,7 @@
     .content { padding: 16px; }
     .promo-row { flex-direction: column; }
     .shop-card { flex-direction: column; align-items: flex-start; }
+    .brand-logo { height: 32px; }
   }
 </style>
 </head>
@@ -451,7 +452,8 @@
 <div class="app-container">
 
   <header class="top-header">
-    <div class="brand">JarBux</div>
+    <img class="brand-logo" src="https://i.postimg.cc/mgm5DhP9/Screenshot-2026-04-30-at-5-17-48-PM-removebg-preview.png" alt="JarBux Logo" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+    <div class="brand" style="display: none;">JarBux</div>
     <div class="header-right">
       <div class="balance-box">
         <span class="balance" id="userBalance">0.00</span>
@@ -589,6 +591,16 @@ const REWARD_PER_CORRECT = 1 / 3;
 let currentUser = null;
 let currentQuiz = null;
 let userData = { stars: 0, quizzes: 0, correct: 0, wrong: 0, status: 'Active' };
+
+// Logo fallback: hide image if broken, show text fallback
+window.addEventListener('load', function() {
+  const logoImg = document.querySelector('.brand-logo');
+  const fallbackText = document.querySelector('.brand');
+  if (logoImg && logoImg.complete && logoImg.naturalWidth === 0) {
+    logoImg.style.display = 'none';
+    if (fallbackText) fallbackText.style.display = 'block';
+  }
+});
 
 function escapeHtml(str) {
   if (!str) return '';
