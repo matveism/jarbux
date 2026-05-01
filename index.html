@@ -3,399 +3,449 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
-  <title>EasyCoin Terminal | Industrial CE 2007</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  <title>JarBux Terminal | Industrial CE 2007</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
 
-    html, body {
-      height: 100%;
-      background: black;
-    }
+  :root {
+    --primary-gradient: linear-gradient(135deg, #F65D57, #FA8B38);
+    --primary-main: #F65D57;
+    --secondary-main: #FA8B38;
+    --bg-dark: #050505;
+    --panel-dark: #111111;
+    --card-dark: #161616;
+    --border-glow: rgba(246, 93, 87, 0.35);
+    --text-main: #ffffff;
+    --text-soft: #ffb38a;
+    --text-dim: #d88a6a;
+    --success: #FA8B38;
+    --warning: #F65D57;
+  }
 
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: lightblue;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      padding: 0;
-    }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    .app-container {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      width: 100%;
-      max-width: 1320px;
-      margin: 0 auto;
-      background: #0a0e14;
-      border: 1px solid #2a313c;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    }
+  html, body {
+    height: 100%;
+    background:
+      radial-gradient(circle at top left, rgba(246,93,87,0.15), transparent 40%),
+      radial-gradient(circle at bottom right, rgba(250,139,56,0.12), transparent 40%),
+      #000;
+  }
 
-    .main-layout {
-      display: flex;
-      flex: 1;
-      min-height: 0;
-    }
+  body {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0;
+    letter-spacing: 0.04em;
+  }
 
-    button {
-      background: #1a212c;
-      border: 1px solid #3a4453;
-      color: #d6e3ef;
-      padding: 6px 16px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: all 0.08s linear;
-    }
-    button:hover { background: #26303f; border-color: #5f7f9e; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    
-    .panel {
-      background: #11161f;
-      border: 1px solid #2a313c;
-      border-radius: 2px;
-      padding: 22px 24px;
-    }
-    .panel-title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 14px;
-      color: #d6e3ef;
-      border-left: 3px solid #5f7f9e;
-      padding-left: 12px;
-    }
-    .industrial-metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-      margin: 20px 0;
-    }
-    .metric-card {
-      background: #0c0f16;
-      border: 1px solid #2a313c;
-      padding: 14px 12px;
-      text-align: center;
-    }
-    .metric-value {
-      font-family: 'Courier New', monospace;
-      font-size: 1.7rem;
-      font-weight: bold;
-      color: #7c9ec2;
-    }
-    .metric-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: #8e9eae;
-      margin-top: 6px;
-    }
-    .quiz-card {
-      background: #0c0f16;
-      border: 1px solid #3a4453;
-      border-radius: 2px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    .quiz-question {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #d6e3ef;
-    }
-    .quiz-input {
-      background: #06080c;
-      border: 1px solid #3a4453;
-      color: #d6e3ef;
-      padding: 8px 12px;
-      width: 100%;
-      font-family: 'Courier New', monospace;
-      font-size: 0.85rem;
-      outline: none;
-    }
-    .quiz-input:focus { border-color: #5f7f9e; }
-    .quiz-result {
-      margin-top: 16px;
-      padding: 12px;
-      background: #0a0e14;
-      border-left: 3px solid #facc15;
-      font-size: 0.85rem;
-      line-height: 1.7;
-    }
-    .submit-btn {
-      margin-top: 4px;
-      background: #162030;
-      border-color: #5f7f9e;
-      color: #a8d0ef;
-      padding: 8px 24px;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-    }
-    .submit-btn:hover { background: #1e2f45; }
-    .top-header {
-      background: #0f141e;
-      border-bottom: 1px solid #2a313c;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .brand { font-size: 18px; font-weight: bold; color: #d6e3ef; letter-spacing: 0.05em; }
-    .header-right { display: flex; align-items: center; gap: 16px; }
-    .balance-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #0c0f16;
-      padding: 6px 18px;
-      border: 1px solid #2a313c;
-    }
-    .balance {
-      font-weight: 700;
-      color: #facc15;
-      font-family: 'Courier New', monospace;
-      font-size: 1.2rem;
-    }
-    .user-icon-wrapper {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-    .user-svg-icon {
-      width: 40px;
-      height: 40px;
-      background: #0c0f16;
-      border: 2px solid #facc15;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .level-badge {
-      background: #facc15;
-      color: #0a0c12;
-      font-size: 10px;
-      font-weight: bold;
-      padding: 1px 7px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-    .sidebar {
-      width: 220px;
-      flex-shrink: 0;
-      background: #0c0f16;
-      border-right: 1px solid #2a313c;
-      padding: 20px 0;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 20px;
-      margin: 4px 0;
-      color: #9aabbb;
-      cursor: pointer;
-      border-left: 3px solid transparent;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all 0.08s linear;
-      user-select: none;
-    }
-    .nav-item:hover { background: #11161f; color: #c8dcea; }
-    .nav-item.active { background: #11161f; color: #e0ecf5; border-left-color: #facc15; }
-    .content { flex: 1; padding: 28px; overflow: auto; }
-    .section { display: none; }
-    .section.active { display: block; }
-    .ce-alert {
-      background: #1a2230;
-      border-left: 4px solid #5f7f9e;
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      color: #9aabbb;
-      margin-top: 8px;
-    }
-    .ce-success { background: #1a2a1a; border-left-color: #7e9e5f; color: #9ec87e; }
-    .ce-error   { background: #2a1a1a; border-left-color: #e03060; color: #e08090; }
-    .ce-warning { background: #2a2210; border-left-color: #facc15; color: #d4b840; }
-    .ce-statusbar {
-      background: #0c0f16;
-      border-top: 1px solid #2a313c;
-      padding: 6px 24px;
-      font-size: 0.68rem;
-      display: flex;
-      justify-content: space-between;
-      color: #6a7a8a;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .lb-row {
-      display: grid;
-      grid-template-columns: 50px 1fr 90px 80px;
-      padding: 9px 12px;
-      border-bottom: 1px solid #1e2530;
-      font-size: 0.82rem;
-      align-items: center;
-    }
-    .lb-header {
-      background: #0c0f16;
-      color: #6a7a8a;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border-bottom: 1px solid #2a313c;
-    }
-    .lb-rank  { font-family: 'Courier New', monospace; color: #facc15; font-weight: bold; }
-    .lb-stars { font-family: 'Courier New', monospace; color: #7c9ec2; text-align: right; }
-    .lb-acc   { font-size: 0.75rem; color: #8e9eae; text-align: right; }
-    .lb-self  { background: #141c28; }
-    .shop-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .shop-card {
-      background: #0c0f16;
-      border: 1px solid #2a313c;
-      padding: 18px 16px;
-      text-align: center;
-      position: relative;
-    }
-    .shop-price { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: bold; color: #facc15; margin-bottom: 6px; }
-    .shop-name  { font-size: 0.85rem; color: #d6e3ef; margin-bottom: 4px; }
-    .shop-cost  { font-size: 0.75rem; color: #8e9eae; margin-bottom: 14px; }
-    .shop-btn   { width: 100%; background: #162030; border-color: #5f7f9e; color: #a8d0ef; padding: 7px; }
-    .shop-btn:hover { background: #1e2f45; }
-    .shop-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .shop-badge {
-      position: absolute; top: 8px; right: 8px;
-      background: #facc15; color: #0a0c12;
-      font-size: 9px; font-weight: bold;
-      padding: 2px 6px; border-radius: 2px;
-    }
-    .shop-loading {
-      text-align: center;
-      padding: 40px 20px;
-      color: #6a7a8a;
-      font-size: 0.85rem;
-    }
-    .promo-box {
-      background: #0c0f16;
-      border: 1px solid #3a4453;
-      padding: 20px;
-      margin-top: 24px;
-    }
-    .promo-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #d6e3ef;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .promo-row { display: flex; gap: 10px; align-items: center; }
-    .promo-input {
-      flex: 1;
-      background: #06080c;
-      border: 1px solid #3a4453;
-      color: #facc15;
-      padding: 9px 14px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      outline: none;
-      letter-spacing: 0.1em;
-    }
-    .promo-input:focus { border-color: #5f7f9e; }
-    .promo-btn {
-      background: #1a2a1a;
-      border-color: #7e9e5f;
-      color: #9ec87e;
-      padding: 9px 20px;
-      font-size: 0.82rem;
-    }
-    .promo-btn:hover { background: #223322; }
-    .profile-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #1e2530;
-      font-size: 0.85rem;
-    }
-    .profile-label { color: #6a7a8a; }
-    .profile-value { color: #d6e3ef; font-family: 'Courier New', monospace; }
-    .status-active  { color: #7e9e5f; }
-    .status-warning { color: #facc15; }
-    .status-locked  { color: #e03060; }
-    
-    .mobile-nav {
-      display: none;
-      background: #0c0f16;
-      border-top: 1px solid #2a313c;
-      width: 100%;
-      position: sticky;
-      bottom: 0;
-      z-index: 100;
-    }
-    .mobile-nav-item {
-      flex: 1; 
-      text-align: center;
-      padding: 10px 4px;
-      font-size: 0.7rem; 
-      color: #6a7a8a;
-      cursor: pointer; 
-      border-top: 2px solid transparent;
-      transition: all 0.08s linear;
-    }
-    .mobile-nav-item.active { 
-      color: #facc15; 
-      border-top-color: #facc15;
-      background: #11161f;
-    }
-    .mobile-nav-icon { 
-      font-size: 1.3rem; 
-      margin-bottom: 4px;
-      display: block;
-    }
-    
-    @media (max-width: 760px) {
-      body { padding: 0; }
-      .app-container { 
-        border: none; 
-        box-shadow: none;
-        min-height: 100vh;
-        border-radius: 0;
-      }
-      .sidebar { display: none; }
-      .content { padding: 16px 16px 24px 16px; }
-      .mobile-nav { 
-        display: flex; 
-        position: sticky;
-        bottom: 0;
-        background: #0c0f16;
-        z-index: 100;
-        width: 100%;
-      }
-      .industrial-metrics { grid-template-columns: 1fr 1fr; }
-      .top-header { padding: 10px 16px; }
-      .ce-statusbar { font-size: 0.6rem; padding: 4px 16px; }
-      .lb-row { grid-template-columns: 40px 1fr 80px; }
-      .lb-acc { display: none; }
-      .promo-row { flex-direction: column; }
-      .promo-input, .promo-btn { width: 100%; }
-    }
-    
-    @media (max-width: 480px) {
-      .ce-statusbar span:first-child { display: none; }
-      .mobile-nav-item { font-size: 0.65rem; padding: 8px 4px; }
-      .mobile-nav-icon { font-size: 1.1rem; }
-    }
-  </style>
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    background: rgba(10,10,10,0.96);
+    border: 1px solid var(--border-glow);
+    box-shadow:
+      0 0 25px rgba(246,93,87,0.12),
+      0 0 50px rgba(250,139,56,0.08);
+    backdrop-filter: blur(8px);
+  }
+
+  .main-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  button {
+    background: rgba(246,93,87,0.08);
+    border: 1px solid var(--primary-main);
+    color: var(--text-main);
+    padding: 8px 18px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+  }
+
+  button:hover {
+    background: var(--primary-gradient);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(246,93,87,0.35);
+    transform: translateY(-1px);
+  }
+
+  button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .panel {
+    background: rgba(20,20,20,0.92);
+    border: 1px solid var(--border-glow);
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: inset 0 0 20px rgba(250,139,56,0.03);
+  }
+
+  .panel-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    color: var(--text-main);
+    border-left: 4px solid var(--primary-main);
+    padding-left: 12px;
+    text-transform: uppercase;
+  }
+
+  .metric-card,
+  .quiz-card,
+  .shop-card,
+  .promo-box,
+  .balance-box,
+  .sidebar,
+  .top-header,
+  .ce-statusbar {
+    background: rgba(18,18,18,0.95);
+    border: 1px solid var(--border-glow);
+  }
+
+  .metric-value,
+  .balance,
+  .shop-price,
+  .lb-rank,
+  .lb-stars,
+  .profile-value {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--secondary-main);
+    text-shadow: 0 0 8px rgba(250,139,56,0.25);
+  }
+
+  .metric-label,
+  .profile-label,
+  .lb-acc {
+    color: var(--text-dim);
+  }
+
+  .brand {
+    font-size: 20px;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav-item {
+    color: var(--text-dim);
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+  }
+
+  .nav-item:hover {
+    background: rgba(246,93,87,0.08);
+    color: var(--text-main);
+  }
+
+  .nav-item.active {
+    background: rgba(246,93,87,0.12);
+    color: var(--secondary-main);
+    border-left-color: var(--primary-main);
+    box-shadow: inset 0 0 12px rgba(246,93,87,0.08);
+  }
+
+  .quiz-input,
+  .promo-input {
+    background: #0b0b0b;
+    border: 1px solid var(--border-glow);
+    color: var(--secondary-main);
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .quiz-input:focus,
+  .promo-input:focus {
+    border-color: var(--secondary-main);
+    box-shadow: 0 0 10px rgba(250,139,56,0.18);
+  }
+
+  .submit-btn,
+  .shop-btn,
+  .promo-btn {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    font-weight: 700;
+  }
+
+  .submit-btn:hover,
+  .shop-btn:hover,
+  .promo-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-2px);
+  }
+
+  .level-badge,
+  .shop-badge {
+    background: var(--primary-gradient);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 12px rgba(246,93,87,0.25);
+  }
+
+  .ce-success {
+    background: rgba(250,139,56,0.08);
+    border-left-color: var(--secondary-main);
+    color: var(--secondary-main);
+  }
+
+  .ce-error {
+    background: rgba(246,93,87,0.08);
+    border-left-color: var(--primary-main);
+    color: var(--primary-main);
+  }
+
+  .ce-warning {
+    background: rgba(250,139,56,0.08);
+    border-left-color: var(--secondary-main);
+    color: var(--secondary-main);
+  }
+
+  .mobile-nav {
+    background: rgba(10,10,10,0.98);
+    border-top: 1px solid var(--border-glow);
+  }
+
+  .mobile-nav-item.active {
+    color: var(--secondary-main);
+    border-top-color: var(--primary-main);
+    background: rgba(246,93,87,0.08);
+  }
+
+  /* additional layout styles */
+  .top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border-glow);
+    background: rgba(0,0,0,0.65);
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .balance-box {
+    padding: 6px 14px;
+    background: #111;
+    border-radius: 40px;
+    border: 1px solid var(--border-glow);
+  }
+  .user-icon-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sidebar {
+    width: 220px;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-right: 1px solid var(--border-glow);
+  }
+  .nav-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .section {
+    display: none;
+  }
+  .section.active {
+    display: block;
+  }
+  .industrial-metrics {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .metric-card {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    border-radius: 10px;
+    background: #181818;
+  }
+  .metric-value {
+    font-size: 28px;
+    font-weight: 800;
+  }
+  .quiz-card {
+    background: #101010;
+    padding: 16px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+  }
+  .quiz-question {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .quiz-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  .submit-btn {
+    margin-top: 12px;
+    width: 100%;
+    padding: 12px;
+    font-weight: bold;
+  }
+  .quiz-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #202020;
+  }
+  .promo-box {
+    margin-top: 28px;
+    padding: 18px;
+    border-radius: 12px;
+  }
+  .promo-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+  }
+  .promo-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .promo-input {
+    flex: 2;
+    padding: 10px;
+  }
+  .promo-btn {
+    flex: 1;
+  }
+  .shop-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .shop-card {
+    background: #141414;
+    padding: 14px 18px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .shop-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .shop-name {
+    font-weight: 600;
+    flex: 1;
+  }
+  .shop-loading {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .ce-alert {
+    padding: 14px;
+    border-radius: 8px;
+    margin: 12px 0;
+    background: #1a1a1a;
+    text-align: center;
+  }
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mobile-nav {
+    display: none;
+    justify-content: space-around;
+    padding: 8px 0;
+  }
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-top: 2px solid transparent;
+  }
+  .ce-statusbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px;
+    font-size: 0.7rem;
+    border-top: 1px solid var(--border-glow);
+    color: #aaa;
+  }
+  .lb-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 8px;
+    border-bottom: 1px solid #222;
+    font-size: 0.85rem;
+  }
+  .lb-header {
+    font-weight: bold;
+    color: var(--secondary-main);
+    border-bottom: 2px solid #444;
+  }
+  .lb-self {
+    background: rgba(250,139,56,0.12);
+    border-left: 3px solid var(--secondary-main);
+  }
+  @media (max-width: 760px) {
+    .sidebar { display: none; }
+    .mobile-nav { display: flex; }
+    .content { padding: 16px; }
+    .promo-row { flex-direction: column; }
+    .shop-card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -422,19 +472,19 @@
   <div class="main-layout">
     <aside class="sidebar">
       <div class="nav-item active" data-target="earn">
-        <span class="nav-icon">⚡</span>
+        <span class="nav-icon">[E]</span>
         EARN
       </div>
       <div class="nav-item" data-target="shop">
-        <span class="nav-icon">🛒</span>
+        <span class="nav-icon">[S]</span>
         SHOP
       </div>
       <div class="nav-item" data-target="leaders">
-        <span class="nav-icon">🏆</span>
+        <span class="nav-icon">[L]</span>
         LEADERS
       </div>
       <div class="nav-item" data-target="profile">
-        <span class="nav-icon">👤</span>
+        <span class="nav-icon">[P]</span>
         PROFILE
       </div>
     </aside>
@@ -442,7 +492,7 @@
     <main class="content">
       <div class="section active" id="section-earn">
         <div class="panel">
-          <div class="panel-title">▶ QUIZ TERMINAL</div>
+          <div class="panel-title">> QUIZ TERMINAL</div>
           <div class="industrial-metrics">
             <div class="metric-card">
               <div class="metric-value" id="starBalance">0</div>
@@ -458,7 +508,7 @@
             </div>
           </div>
           <div id="quizContainer">
-            <div class="ce-alert">🔐 Please login to access quiz terminal</div>
+            <div class="ce-alert">[LOCK] Please login to access quiz terminal</div>
             <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>
           </div>
         </div>
@@ -466,11 +516,11 @@
 
       <div class="section" id="section-shop">
         <div class="panel">
-          <div class="panel-title">🛒 REWARD EXCHANGE</div>
+          <div class="panel-title">[REWARD EXCHANGE]</div>
           <div id="shopFeedback" style="min-height:24px;"></div>
-          <div id="shopGrid" class="shop-loading">⟳ Loading rewards...</div>
+          <div id="shopGrid" class="shop-loading">[LOADING] Fetching rewards...</div>
           <div class="promo-box">
-            <div class="promo-title">🎟 Redeem Promo Code</div>
+            <div class="promo-title">[PROMO] Redeem Code</div>
             <div class="promo-row">
               <input type="text" id="promoInput" class="promo-input" placeholder="ENTER CODE..." maxlength="32" autocomplete="off" spellcheck="false">
               <button class="promo-btn" id="promoBtn">APPLY CODE</button>
@@ -482,14 +532,14 @@
 
       <div class="section" id="section-leaders">
         <div class="panel">
-          <div class="panel-title">🏆 LEADERBOARD</div>
+          <div class="panel-title">[LEADERBOARD]</div>
           <div id="leaderboardContainer"><div class="ce-alert">Login to see leaderboard</div></div>
         </div>
       </div>
 
       <div class="section" id="section-profile">
         <div class="panel">
-          <div class="panel-title">👤 OPERATOR PROFILE</div>
+          <div class="panel-title">[OPERATOR PROFILE]</div>
           <div class="profile-row"><span class="profile-label">USER ID</span><span class="profile-value" id="profileName">—</span></div>
           <div class="profile-row"><span class="profile-label">STATUS</span><span class="profile-value" id="profileStatus">—</span></div>
           <div class="profile-row"><span class="profile-label">BALANCE</span><span class="profile-value" id="profileBalance">—</span></div>
@@ -498,8 +548,8 @@
           <div class="profile-row"><span class="profile-label">ACCURACY</span><span class="profile-value" id="profileAccuracy">—</span></div>
           <div class="profile-row"><span class="profile-label">LEVEL</span><span class="profile-value" id="profileLevel">—</span></div>
           <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-            <button id="refreshBtn" style="display:none;">↻ REFRESH DATA</button>
-            <button id="logoutBtn" style="background:#2a1a1a; border-color:#e03060; color:#e08090; display:none;">⏻ SIGN OUT</button>
+            <button id="refreshBtn" style="display:none;">[REFRESH]</button>
+            <button id="logoutBtn" style="background:#2a1a1a; border-color:#e03060; color:#e08090; display:none;">SIGN OUT</button>
             <button id="loginBtnProfile">LOGIN TO TERMINAL</button>
           </div>
         </div>
@@ -509,29 +559,27 @@
 
   <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav-item active" data-target="earn">
-      <div class="mobile-nav-icon">⚡</div>
+      <div class="mobile-nav-icon">[E]</div>
       <span>EARN</span>
     </div>
     <div class="mobile-nav-item" data-target="shop">
-      <div class="mobile-nav-icon">🛒</div>
+      <div class="mobile-nav-icon">[S]</div>
       <span>SHOP</span>
     </div>
     <div class="mobile-nav-item" data-target="leaders">
-      <div class="mobile-nav-icon">🏆</div>
+      <div class="mobile-nav-icon">[L]</div>
       <span>LEADERS</span>
     </div>
     <div class="mobile-nav-item" data-target="profile">
-      <div class="mobile-nav-icon">👤</div>
+      <div class="mobile-nav-icon">[P]</div>
       <span>PROFILE</span>
     </div>
   </div>
 
   <div class="ce-statusbar">
-    <span>© JarBux 2026</span>
-    
+    <span>(c) JarBux 2026</span>
     <span id="liveClock"></span>
   </div>
-
 </div>
 
 <script>
@@ -587,7 +635,7 @@ function updateUI() {
 
   if (currentUser) {
     document.getElementById('profileName').textContent = currentUser.UserID;
-    document.getElementById('profileBalance').textContent = userData.stars.toFixed(2) + ' ⭐';
+    document.getElementById('profileBalance').textContent = userData.stars.toFixed(2) + ' STARS';
     document.getElementById('profileCorrect').textContent = userData.correct;
     document.getElementById('profileWrong').textContent = userData.wrong;
     document.getElementById('profileAccuracy').textContent = acc !== null ? acc + '%' : 'N/A';
@@ -614,12 +662,12 @@ async function doLogin() {
   if (pwd === null) return;
 
   const quizContainer = document.getElementById('quizContainer');
-  if (quizContainer) quizContainer.innerHTML = '<div class="ce-alert">⟳ Authenticating...</div>';
+  if (quizContainer) quizContainer.innerHTML = '<div class="ce-alert">[AUTH] Authenticating...</div>';
 
   const result = await api('getLogin');
   if (!result.success) {
     if (quizContainer) {
-      quizContainer.innerHTML = `<div class="ce-alert ce-error">❌ Server error: ${escapeHtml(result.error)}</div>
+      quizContainer.innerHTML = `<div class="ce-alert ce-error">[ERROR] Server error: ${escapeHtml(result.error)}</div>
        <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
     }
     bindLoginBtn(); return;
@@ -632,7 +680,7 @@ async function doLogin() {
 
   if (!found) {
     if (quizContainer) {
-      quizContainer.innerHTML = `<div class="ce-alert ce-error">❌ Invalid credentials</div>
+      quizContainer.innerHTML = `<div class="ce-alert ce-error">[DENIED] Invalid credentials</div>
        <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
     }
     bindLoginBtn(); return;
@@ -659,7 +707,7 @@ function doLogout() {
   updateUI();
   const quizContainer = document.getElementById('quizContainer');
   if (quizContainer) {
-    quizContainer.innerHTML = `<div class="ce-alert">🔐 Please login to access quiz terminal</div>
+    quizContainer.innerHTML = `<div class="ce-alert">[LOCK] Please login to access quiz terminal</div>
      <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
   }
   bindLoginBtn();
@@ -667,13 +715,13 @@ function doLogout() {
   const shopGrid = document.getElementById('shopGrid');
   if (shopGrid) {
     shopGrid.className = 'shop-loading';
-    shopGrid.innerHTML = '⟳ Loading rewards...';
+    shopGrid.innerHTML = '[LOADING] Fetching rewards...';
   }
 }
 
 async function doRefresh() {
   if (!currentUser) return;
-  showFeedback('shopFeedback', '⟳ Refreshing data...', '');
+  showFeedback('shopFeedback', '[SYNC] Refreshing data...', '');
   const result = await api('refreshUser', { userId: currentUser.UserID });
   if (result.success && result.user) {
     const u = result.user;
@@ -685,9 +733,9 @@ async function doRefresh() {
       status: u.Status || 'Active'
     };
     updateUI();
-    showFeedback('shopFeedback', '✓ Data refreshed successfully', 'success');
+    showFeedback('shopFeedback', '[OK] Data refreshed successfully', 'success');
   } else {
-    showFeedback('shopFeedback', '❌ Failed to refresh data', 'error');
+    showFeedback('shopFeedback', '[FAIL] Refresh failed', 'error');
   }
 }
 
@@ -697,18 +745,18 @@ async function loadShop() {
   
   if (!currentUser) {
     grid.className = '';
-    grid.innerHTML = '<div class="ce-alert">🔐 Login to view rewards</div>';
+    grid.innerHTML = '<div class="ce-alert">[LOCK] Login to view rewards</div>';
     return;
   }
   
   grid.className = 'shop-loading';
-  grid.innerHTML = '⟳ Loading rewards...';
+  grid.innerHTML = '[LOADING] Rewards...';
 
   const result = await api('getCashouts', { userId: currentUser.UserID });
 
   if (!result.success) {
     grid.className = '';
-    grid.innerHTML = `<div class="ce-alert ce-error">❌ ${escapeHtml(result.error || 'Failed to load rewards')}</div>`;
+    grid.innerHTML = `<div class="ce-alert ce-error">[ERROR] ${escapeHtml(result.error || 'Failed to load rewards')}</div>`;
     return;
   }
 
@@ -727,7 +775,7 @@ async function loadShop() {
     return `
       <div class="shop-card">
         ${category ? `<div class="shop-badge">${category}</div>` : ''}
-        <div class="shop-price">${cost} ⭐</div>
+        <div class="shop-price">${cost} STARS</div>
         <div class="shop-name">${name}</div>
         ${description ? `<div class="shop-cost" style="font-size:0.7rem;">${description}</div>` : ''}
         <button class="shop-btn" data-row="${r.rowNum}" data-cost="${cost}" data-name="${name}">REDEEM</button>
@@ -744,19 +792,19 @@ async function handleRedeem(e) {
   const name = btn.dataset.name;
   
   if (!currentUser) { 
-    showFeedback('shopFeedback', '🔐 Please login first', 'error'); 
+    showFeedback('shopFeedback', '[LOCK] Please login first', 'error'); 
     return; 
   }
   
   if (userData.stars < cost) {
-    showFeedback('shopFeedback', `❌ Need ${cost} STARS — you have ${Math.floor(userData.stars)}`, 'error');
+    showFeedback('shopFeedback', `[DENIED] Need ${cost} STARS — you have ${Math.floor(userData.stars)}`, 'error');
     return;
   }
   
   if (!confirm(`Redeem ${name} for ${cost} STARS?`)) return;
 
   btn.disabled = true;
-  btn.textContent = '⟳ Processing...';
+  btn.textContent = '[PROCESS]';
   
   const result = await api('claimReward', { 
     userId: currentUser.UserID, 
@@ -769,16 +817,16 @@ async function handleRedeem(e) {
   if (result.success) {
     userData.stars = result.newBalance;
     updateUI();
-    showFeedback('shopFeedback', `✅ ${name} redeemed! New balance: ${result.newBalance.toFixed(2)} STARS`, 'success');
+    showFeedback('shopFeedback', `[SUCCESS] ${name} redeemed! New balance: ${result.newBalance.toFixed(2)} STARS`, 'success');
     loadShop();
   } else {
-    showFeedback('shopFeedback', `❌ ${escapeHtml(result.error || 'Redemption failed')}`, 'error');
+    showFeedback('shopFeedback', `[FAIL] ${escapeHtml(result.error || 'Redemption failed')}`, 'error');
   }
 }
 
 async function redeemPromo() {
   if (!currentUser) { 
-    showFeedback('promoFeedback', '🔐 Login first to redeem a promo code', 'error'); 
+    showFeedback('promoFeedback', '[LOCK] Login first to redeem a promo code', 'error'); 
     return; 
   }
   
@@ -786,14 +834,14 @@ async function redeemPromo() {
   if (!input) return;
   const code = input.value.trim().toUpperCase();
   if (!code) { 
-    showFeedback('promoFeedback', '⚠ Enter a promo code first', 'warning'); 
+    showFeedback('promoFeedback', '[WARNING] Enter a promo code first', 'warning'); 
     return; 
   }
   
   const btn = document.getElementById('promoBtn');
   if (btn) {
     btn.disabled = true; 
-    btn.textContent = '⟳ Checking...';
+    btn.textContent = '[CHECK]';
   }
   
   const result = await api('redeemPromo', { userId: currentUser.UserID, code });
@@ -808,9 +856,9 @@ async function redeemPromo() {
     userData.stars = result.newBalance;
     updateUI();
     input.value = '';
-    showFeedback('promoFeedback', `🎉 Code ${escapeHtml(code)} accepted! +${earned.toFixed(2)} STARS added.`, 'success');
+    showFeedback('promoFeedback', `[OK] Code ${escapeHtml(code)} accepted! +${earned.toFixed(2)} STARS added.`, 'success');
   } else {
-    showFeedback('promoFeedback', `❌ ${escapeHtml(result.error || 'Invalid or already used promo code')}`, 'error');
+    showFeedback('promoFeedback', `[FAIL] ${escapeHtml(result.error || 'Invalid or already used promo code')}`, 'error');
   }
 }
 
@@ -818,10 +866,10 @@ async function loadQuiz() {
   if (!currentUser) return;
   const container = document.getElementById('quizContainer');
   if (!container) return;
-  container.innerHTML = '<div class="ce-alert">⟳ Loading quiz...</div>';
+  container.innerHTML = '<div class="ce-alert">[LOADING] Fetching quiz...</div>';
   const result = await api('getQuiz', { userId: currentUser.UserID });
   if (!result.success) {
-    container.innerHTML = `<div class="ce-alert ce-warning">🏆 ${escapeHtml(result.message || 'No quizzes available')}</div><button id="reloadQuizBtn" style="margin-top:12px;">↻ CHECK AGAIN</button>`;
+    container.innerHTML = `<div class="ce-alert ce-warning">[INFO] ${escapeHtml(result.message || 'No quizzes available')}</div><button id="reloadQuizBtn" style="margin-top:12px;">RETRY</button>`;
     document.getElementById('reloadQuizBtn')?.addEventListener('click', loadQuiz);
     return;
   }
@@ -830,7 +878,7 @@ async function loadQuiz() {
     <div class="quiz-card"><div class="quiz-question">Q1 — ${escapeHtml(currentQuiz.q1)}</div><input type="text" id="quizAns1" class="quiz-input" placeholder="Your answer..." autocomplete="off"></div>
     <div class="quiz-card"><div class="quiz-question">Q2 — ${escapeHtml(currentQuiz.q2)}</div><input type="text" id="quizAns2" class="quiz-input" placeholder="Your answer..." autocomplete="off"></div>
     <div class="quiz-card"><div class="quiz-question">Q3 — ${escapeHtml(currentQuiz.q3)}</div><input type="text" id="quizAns3" class="quiz-input" placeholder="Your answer..." autocomplete="off"></div>
-    <button class="submit-btn" id="submitQuizBtn">▶ SUBMIT QUIZ</button>
+    <button class="submit-btn" id="submitQuizBtn">SUBMIT QUIZ</button>
     <div id="quizResultArea" class="quiz-result" style="display:none;"></div>`;
   document.getElementById('submitQuizBtn')?.addEventListener('click', submitQuiz);
 }
@@ -840,7 +888,7 @@ async function submitQuiz() {
   const btn = document.getElementById('submitQuizBtn');
   if (btn) {
     btn.disabled = true; 
-    btn.textContent = '⟳ Submitting...';
+    btn.textContent = '[SUBMITTING]';
   }
   const a1 = (document.getElementById('quizAns1')?.value || '').trim().toLowerCase();
   const a2 = (document.getElementById('quizAns2')?.value || '').trim().toLowerCase();
@@ -853,15 +901,14 @@ async function submitQuiz() {
   const newCorrectTotal = userData.correct + correctCount;
   const newWrongTotal = userData.wrong + (3 - correctCount);
   const newBalance = userData.stars + earned;
-  const acc = calcAccuracy(newCorrectTotal, newWrongTotal);
-  const newStatus = acc !== null && acc < 30 ? 'Locked' : (acc !== null && acc < 60 ? 'Warning' : 'Active');
-  const result = await api('submitQuiz', { userId: currentUser.UserID, quizRowNum: currentQuiz.rowNum, correctCount, earned, newCorrectTotal, newWrongTotal, newBalance, newStatus });
+  const newStatus = (calcAccuracy(newCorrectTotal, newWrongTotal) !== null && calcAccuracy(newCorrectTotal, newWrongTotal) < 30) ? 'Locked' : ((calcAccuracy(newCorrectTotal, newWrongTotal) !== null && calcAccuracy(newCorrectTotal, newWrongTotal) < 60) ? 'Warning' : 'Active');
+  const result = await api('submitQuiz', { userId: currentUser.UserID, quizRowNum: currentQuiz.rowNum, correctCount, earned, newCorrectTotal, newWrongTotal, newBalance, newStatus: newStatus });
   if (!result.success) { 
     if (btn) {
       btn.disabled=false; 
-      btn.textContent='▶ SUBMIT QUIZ';
+      btn.textContent='SUBMIT QUIZ';
     }
-    showFeedback('quizResultArea', '❌ Failed to submit quiz', 'error');
+    showFeedback('quizResultArea', '[FAIL] Submit failed', 'error');
     return; 
   }
   userData.stars = newBalance; 
@@ -874,7 +921,7 @@ async function submitQuiz() {
   const rd = document.getElementById('quizResultArea');
   if (rd) {
     rd.style.display = 'block'; 
-    rd.innerHTML = `<strong>RESULT: ${correctCount}/3 CORRECT</strong><br>+${earned.toFixed(2)} STARS | Balance: ${newBalance.toFixed(2)}`;
+    rd.innerHTML = `<strong>RESULT: ${correctCount}/3 CORRECT</strong><br>+${earned.toFixed(2)} STARS | NEW BALANCE: ${newBalance.toFixed(2)}`;
     rd.className = 'quiz-result ce-success';
   }
   ['quizAns1','quizAns2','quizAns3'].forEach(id => { let el = document.getElementById(id); if(el) el.disabled = true; });
@@ -885,10 +932,10 @@ async function loadLeaderboard() {
   if(!currentUser) return; 
   const c = document.getElementById('leaderboardContainer'); 
   if(!c) return;
-  c.innerHTML = '<div class="ce-alert">⟳ Loading...</div>'; 
+  c.innerHTML = '<div class="ce-alert">[LOADING] Leaderboard...</div>'; 
   const result = await api('getLeaderboard'); 
   if(!result.success || !result.leaderboard){
-    c.innerHTML = '<div class="ce-alert ce-error">❌ Failed to load leaderboard</div>';
+    c.innerHTML = '<div class="ce-alert ce-error">[ERROR] Failed to load leaderboard</div>';
     return;
   } 
   if(result.leaderboard.length === 0) {
@@ -900,8 +947,8 @@ async function loadLeaderboard() {
       const acc = calcAccuracy(u.correct, u.wrong); 
       return `<div class="lb-row${u.userId === currentUser.UserID ? ' lb-self' : ''}">
         <span class="lb-rank">#${u.rank}</span>
-        <span>${escapeHtml(u.userId)}${u.userId === currentUser.UserID ? ' <span style="color:#facc15;font-size:0.7rem;">◀ YOU</span>' : ''}</span>
-        <span class="lb-stars">${Math.floor(u.stars)} ⭐</span>
+        <span>${escapeHtml(u.userId)}${u.userId === currentUser.UserID ? ' <span style="color:#facc15;font-size:0.7rem;">[YOU]</span>' : ''}</span>
+        <span class="lb-stars">${Math.floor(u.stars)} STARS</span>
         <span class="lb-acc">${acc !== null ? acc+'%' : '—'}</span>
       </div>`; 
     }).join('')
