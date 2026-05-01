@@ -7,7 +7,6 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* FIXED BOTTOM NAVIGATION FIX — ensures mobile nav stays at bottom on all devices */
     html, body {
       height: 100%;
       background: black;
@@ -22,7 +21,6 @@
       padding: 0;
     }
 
-    /* Main app container uses flex column to push footer down naturally */
     .app-container {
       display: flex;
       flex-direction: column;
@@ -30,16 +28,15 @@
       width: 100%;
       max-width: 1320px;
       margin: 0 auto;
-      background: gray;
+      background: #0a0e14;
       border: 1px solid #2a313c;
       box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     }
 
-    /* Main layout takes remaining space */
     .main-layout {
       display: flex;
       flex: 1;
-      min-height: 0; /* flex overflow fix */
+      min-height: 0;
     }
 
     button {
@@ -55,6 +52,7 @@
     }
     button:hover { background: #26303f; border-color: #5f7f9e; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
+    
     .panel {
       background: #11161f;
       border: 1px solid #2a313c;
@@ -235,7 +233,6 @@
       flex-wrap: wrap;
       gap: 6px;
     }
-    /* LEADERBOARD */
     .lb-row {
       display: grid;
       grid-template-columns: 50px 1fr 90px 80px;
@@ -256,7 +253,6 @@
     .lb-stars { font-family: 'Courier New', monospace; color: #7c9ec2; text-align: right; }
     .lb-acc   { font-size: 0.75rem; color: #8e9eae; text-align: right; }
     .lb-self  { background: #141c28; }
-    /* SHOP */
     .shop-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -275,6 +271,7 @@
     .shop-cost  { font-size: 0.75rem; color: #8e9eae; margin-bottom: 14px; }
     .shop-btn   { width: 100%; background: #162030; border-color: #5f7f9e; color: #a8d0ef; padding: 7px; }
     .shop-btn:hover { background: #1e2f45; }
+    .shop-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .shop-badge {
       position: absolute; top: 8px; right: 8px;
       background: #facc15; color: #0a0c12;
@@ -287,7 +284,6 @@
       color: #6a7a8a;
       font-size: 0.85rem;
     }
-    /* PROMO */
     .promo-box {
       background: #0c0f16;
       border: 1px solid #3a4453;
@@ -324,7 +320,6 @@
       font-size: 0.82rem;
     }
     .promo-btn:hover { background: #223322; }
-    /* PROFILE */
     .profile-row {
       display: flex;
       justify-content: space-between;
@@ -338,7 +333,6 @@
     .status-warning { color: #facc15; }
     .status-locked  { color: #e03060; }
     
-    /* --- MOBILE FIXED BOTTOM NAVIGATION (ALWAYS ON BOTTOM) --- */
     .mobile-nav {
       display: none;
       background: #0c0f16;
@@ -369,7 +363,6 @@
       display: block;
     }
     
-    /* Media query: on mobile, sidebar hidden, mobile-nav becomes flex and sticks to bottom */
     @media (max-width: 760px) {
       body { padding: 0; }
       .app-container { 
@@ -407,7 +400,6 @@
 <body>
 <div class="app-container">
 
-  <!-- HEADER -->
   <header class="top-header">
     <div class="brand">JarBux</div>
     <div class="header-right">
@@ -427,9 +419,7 @@
     </div>
   </header>
 
-  <!-- MAIN LAYOUT -->
   <div class="main-layout">
-    <!-- SIDEBAR (DESKTOP) -->
     <aside class="sidebar">
       <div class="nav-item active" data-target="earn">
         <span class="nav-icon">⚡</span>
@@ -449,13 +439,10 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="content">
-      <!-- EARN -->
       <div class="section active" id="section-earn">
         <div class="panel">
           <div class="panel-title">▶ QUIZ TERMINAL</div>
-
           <div class="industrial-metrics">
             <div class="metric-card">
               <div class="metric-value" id="starBalance">0</div>
@@ -470,7 +457,6 @@
               <div class="metric-label">Accuracy</div>
             </div>
           </div>
-
           <div id="quizContainer">
             <div class="ce-alert">🔐 Please login to access quiz terminal</div>
             <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>
@@ -478,13 +464,11 @@
         </div>
       </div>
 
-      <!-- SHOP -->
       <div class="section" id="section-shop">
         <div class="panel">
           <div class="panel-title">🛒 REWARD EXCHANGE</div>
           <div id="shopFeedback" style="min-height:24px;"></div>
           <div id="shopGrid" class="shop-loading">⟳ Loading rewards...</div>
-
           <div class="promo-box">
             <div class="promo-title">🎟 Redeem Promo Code</div>
             <div class="promo-row">
@@ -496,7 +480,6 @@
         </div>
       </div>
 
-      <!-- LEADERS -->
       <div class="section" id="section-leaders">
         <div class="panel">
           <div class="panel-title">🏆 LEADERBOARD</div>
@@ -504,7 +487,6 @@
         </div>
       </div>
 
-      <!-- PROFILE -->
       <div class="section" id="section-profile">
         <div class="panel">
           <div class="panel-title">👤 OPERATOR PROFILE</div>
@@ -525,7 +507,6 @@
     </main>
   </div>
 
-  <!-- MOBILE BOTTOM NAVIGATION (FIXED AT BOTTOM) -->
   <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav-item active" data-target="earn">
       <div class="mobile-nav-icon">⚡</div>
@@ -545,109 +526,87 @@
     </div>
   </div>
 
-  <!-- STATUS BAR -->
   <div class="ce-statusbar">
-    <span>© EasyCoin INDUSTRIAL CE 2007</span>
-    <span>⚡ CONNECTION: SECURE</span>
+    <span>© JarBux 2026</span>
+    
     <span id="liveClock"></span>
   </div>
 
 </div>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRQw1hO48Q7UlFDKZOPaxne7qoKxRDY26FqVTOoADsxz7xaa_Lktpb-Xvuh51Nj_2x/exec";
 const REWARD_PER_CORRECT = 1 / 3;
 
-// ============================================================
-// STATE
-// ============================================================
 let currentUser = null;
-let currentQuiz  = null;
-let userData     = { stars: 0, quizzes: 0, correct: 0, wrong: 0, status: 'Active' };
+let currentQuiz = null;
+let userData = { stars: 0, quizzes: 0, correct: 0, wrong: 0, status: 'Active' };
 
-// ============================================================
-// UTILS
-// ============================================================
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/[&<>"']/g, m =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+
 function calcAccuracy(c, w) {
   return (c + w) === 0 ? null : Math.round(c / (c + w) * 100);
 }
+
 function calcLevel(q) { return Math.floor(q / 5) + 1; }
-function calcStatus(acc) {
-  if (acc === null) return 'Active';
-  if (acc < 30) return 'Locked';
-  if (acc < 60) return 'Warning';
-  return 'Active';
-}
+
 function showFeedback(elId, msg, type = '') {
   const el = document.getElementById(elId);
   if (!el) return;
   el.className = 'ce-alert' + (type ? ' ce-' + type : '');
   el.style.display = 'block';
   el.innerHTML = msg;
-  if (type !== 'error') setTimeout(() => { el.style.display = 'none'; }, 4500);
+  if (type !== 'error') setTimeout(() => { if (el) el.style.display = 'none'; }, 4500);
 }
 
-// ============================================================
-// API
-// ============================================================
 async function api(action, data = {}) {
-  const params = new URLSearchParams({ action, data: JSON.stringify(data) });
-  const res = await fetch(`${APPS_SCRIPT_URL}?${params}`);
-  return res.json();
-}
-
-// ============================================================
-// UI
-// ============================================================
-function updateUI() {
-  const acc   = calcAccuracy(userData.correct, userData.wrong);
-  const level = calcLevel(userData.quizzes);
-
-  document.getElementById('userBalance').textContent   = userData.stars.toFixed(2);
-  document.getElementById('starBalance').textContent   = Math.floor(userData.stars);
-  document.getElementById('quizCount').textContent     = userData.quizzes;
-  document.getElementById('accuracyValue').textContent = acc !== null ? acc + '%' : '—';
-  document.getElementById('levelBadge').textContent    = 'Lv.' + level;
-
-  if (currentUser) {
-    document.getElementById('profileName').textContent    = currentUser.UserID;
-    document.getElementById('profileBalance').textContent = userData.stars.toFixed(2) + ' ⭐';
-    document.getElementById('profileCorrect').textContent = userData.correct;
-    document.getElementById('profileWrong').textContent   = userData.wrong;
-    document.getElementById('profileAccuracy').textContent = acc !== null ? acc + '%' : 'N/A';
-    document.getElementById('profileLevel').textContent   = 'Level ' + level;
-    const sEl = document.getElementById('profileStatus');
-    sEl.textContent = userData.status;
-    sEl.className   = 'profile-value status-' + userData.status.toLowerCase();
-    const logoutBtn = document.getElementById('logoutBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const loginBtnProfile = document.getElementById('loginBtnProfile');
-    if (logoutBtn) logoutBtn.style.display = 'inline-block';
-    if (refreshBtn) refreshBtn.style.display = 'inline-block';
-    if (loginBtnProfile) loginBtnProfile.style.display = 'none';
-  } else {
-    ['profileName','profileBalance','profileCorrect','profileWrong','profileAccuracy','profileLevel','profileStatus']
-      .forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; });
-    const logoutBtn = document.getElementById('logoutBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const loginBtnProfile = document.getElementById('loginBtnProfile');
-    if (logoutBtn) logoutBtn.style.display = 'none';
-    if (refreshBtn) refreshBtn.style.display = 'none';
-    if (loginBtnProfile) loginBtnProfile.style.display = 'inline-block';
+  try {
+    const params = new URLSearchParams({ action, data: JSON.stringify(data) });
+    const res = await fetch(`${APPS_SCRIPT_URL}?${params}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('API Error:', err);
+    return { success: false, error: err.message };
   }
 }
 
-// ============================================================
-// LOGIN / LOGOUT
-// ============================================================
+function updateUI() {
+  const acc = calcAccuracy(userData.correct, userData.wrong);
+  const level = calcLevel(userData.quizzes);
+
+  document.getElementById('userBalance').textContent = userData.stars.toFixed(2);
+  document.getElementById('starBalance').textContent = Math.floor(userData.stars);
+  document.getElementById('quizCount').textContent = userData.quizzes;
+  document.getElementById('accuracyValue').textContent = acc !== null ? acc + '%' : '—';
+  document.getElementById('levelBadge').textContent = 'Lv.' + level;
+
+  if (currentUser) {
+    document.getElementById('profileName').textContent = currentUser.UserID;
+    document.getElementById('profileBalance').textContent = userData.stars.toFixed(2) + ' ⭐';
+    document.getElementById('profileCorrect').textContent = userData.correct;
+    document.getElementById('profileWrong').textContent = userData.wrong;
+    document.getElementById('profileAccuracy').textContent = acc !== null ? acc + '%' : 'N/A';
+    document.getElementById('profileLevel').textContent = 'Level ' + level;
+    const sEl = document.getElementById('profileStatus');
+    sEl.textContent = userData.status;
+    sEl.className = 'profile-value status-' + userData.status.toLowerCase();
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+    document.getElementById('refreshBtn').style.display = 'inline-block';
+    document.getElementById('loginBtnProfile').style.display = 'none';
+  } else {
+    ['profileName','profileBalance','profileCorrect','profileWrong','profileAccuracy','profileLevel','profileStatus']
+      .forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '—'; });
+    document.getElementById('logoutBtn').style.display = 'none';
+    document.getElementById('refreshBtn').style.display = 'none';
+    document.getElementById('loginBtnProfile').style.display = 'inline-block';
+  }
+}
+
 async function doLogin() {
   const uid = prompt('Enter User ID:');
   if (!uid || !uid.trim()) return;
@@ -679,21 +638,13 @@ async function doLogin() {
     bindLoginBtn(); return;
   }
 
-  if ((found.Status || 'Active') === 'Locked') {
-    if (quizContainer) {
-      quizContainer.innerHTML = `<div class="ce-alert ce-error">🔒 Account LOCKED. Contact support.</div>
-       <button id="loginBtn" style="margin-top:12px;">TRY AGAIN</button>`;
-    }
-    bindLoginBtn(); return;
-  }
-
   currentUser = { UserID: String(found.UserID).trim(), Status: found.Status || 'Active' };
   userData = {
-    stars:   parseFloat(found.Balance)  || 0,
-    correct: parseInt(found.Correct)    || 0,
-    wrong:   parseInt(found.Wrong)      || 0,
+    stars: parseFloat(found.Balance) || 0,
+    correct: parseInt(found.Correct) || 0,
+    wrong: parseInt(found.Wrong) || 0,
     quizzes: Math.round(((parseInt(found.Correct)||0) + (parseInt(found.Wrong)||0)) / 3),
-    status:  found.Status || 'Active'
+    status: found.Status || 'Active'
   };
 
   updateUI();
@@ -712,8 +663,7 @@ function doLogout() {
      <button id="loginBtn" style="margin-top:12px;">LOGIN TO TERMINAL</button>`;
   }
   bindLoginBtn();
-  const leaderboardContainer = document.getElementById('leaderboardContainer');
-  if (leaderboardContainer) leaderboardContainer.innerHTML = '<div class="ce-alert">Login to see leaderboard</div>';
+  document.getElementById('leaderboardContainer').innerHTML = '<div class="ce-alert">Login to see leaderboard</div>';
   const shopGrid = document.getElementById('shopGrid');
   if (shopGrid) {
     shopGrid.className = 'shop-loading';
@@ -723,51 +673,64 @@ function doLogout() {
 
 async function doRefresh() {
   if (!currentUser) return;
+  showFeedback('shopFeedback', '⟳ Refreshing data...', '');
   const result = await api('refreshUser', { userId: currentUser.UserID });
   if (result.success && result.user) {
     const u = result.user;
     userData = {
-      stars:   parseFloat(u.Balance)  || 0,
-      correct: parseInt(u.Correct)    || 0,
-      wrong:   parseInt(u.Wrong)      || 0,
+      stars: parseFloat(u.Balance) || 0,
+      correct: parseInt(u.Correct) || 0,
+      wrong: parseInt(u.Wrong) || 0,
       quizzes: Math.round(((parseInt(u.Correct)||0)+(parseInt(u.Wrong)||0))/3),
-      status:  u.Status || 'Active'
+      status: u.Status || 'Active'
     };
     updateUI();
-    showFeedback('shopFeedback', '✓ Data refreshed', 'success');
+    showFeedback('shopFeedback', '✓ Data refreshed successfully', 'success');
+  } else {
+    showFeedback('shopFeedback', '❌ Failed to refresh data', 'error');
   }
 }
 
-// ============================================================
-// SHOP
-// ============================================================
 async function loadShop() {
   const grid = document.getElementById('shopGrid');
   if (!grid) return;
+  
+  if (!currentUser) {
+    grid.className = '';
+    grid.innerHTML = '<div class="ce-alert">🔐 Login to view rewards</div>';
+    return;
+  }
+  
   grid.className = 'shop-loading';
   grid.innerHTML = '⟳ Loading rewards...';
 
-  const result = await api('getCashout');
+  const result = await api('getCashouts', { userId: currentUser.UserID });
 
-  if (!result.success || !result.rewards || result.rewards.length === 0) {
+  if (!result.success) {
+    grid.className = '';
+    grid.innerHTML = `<div class="ce-alert ce-error">❌ ${escapeHtml(result.error || 'Failed to load rewards')}</div>`;
+    return;
+  }
+
+  if (!result.cashouts || result.cashouts.length === 0) {
     grid.className = '';
     grid.innerHTML = '<div class="ce-alert">No rewards available right now</div>';
     return;
   }
 
   grid.className = 'shop-grid';
-  grid.innerHTML = result.rewards.map(r => {
-    const cost   = parseFloat(r.Cost || r.cost || 0);
-    const name   = escapeHtml(r.Name || r.name || 'Reward');
-    const label  = escapeHtml(r.Label || r.label || r.Value || r.value || '');
-    const badge  = r.Badge || r.badge || '';
+  grid.innerHTML = result.cashouts.map(r => {
+    const cost = parseFloat(r.cost || 0);
+    const name = escapeHtml(r.rewardName || 'Reward');
+    const description = escapeHtml(r.description || '');
+    const category = escapeHtml(r.category || '');
     return `
       <div class="shop-card">
-        ${badge ? `<div class="shop-badge">${escapeHtml(badge)}</div>` : ''}
-        <div class="shop-price">${label}</div>
+        ${category ? `<div class="shop-badge">${category}</div>` : ''}
+        <div class="shop-price">${cost} ⭐</div>
         <div class="shop-name">${name}</div>
-        <div class="shop-cost">${cost} STARS</div>
-        <button class="shop-btn" data-redeem="${cost}" data-name="${name}">Redeem</button>
+        ${description ? `<div class="shop-cost" style="font-size:0.7rem;">${description}</div>` : ''}
+        <button class="shop-btn" data-row="${r.rowNum}" data-cost="${cost}" data-name="${name}">REDEEM</button>
       </div>`;
   }).join('');
 
@@ -775,55 +738,74 @@ async function loadShop() {
 }
 
 async function handleRedeem(e) {
-  const btn  = e.currentTarget;
-  const cost = parseFloat(btn.dataset.redeem);
+  const btn = e.currentTarget;
+  const rowNum = parseInt(btn.dataset.row);
+  const cost = parseFloat(btn.dataset.cost);
   const name = btn.dataset.name;
-  if (!currentUser) { showFeedback('shopFeedback', '🔐 Please login first', 'error'); return; }
+  
+  if (!currentUser) { 
+    showFeedback('shopFeedback', '🔐 Please login first', 'error'); 
+    return; 
+  }
+  
   if (userData.stars < cost) {
     showFeedback('shopFeedback', `❌ Need ${cost} STARS — you have ${Math.floor(userData.stars)}`, 'error');
     return;
   }
+  
   if (!confirm(`Redeem ${name} for ${cost} STARS?`)) return;
 
   btn.disabled = true;
-  const newBalance = userData.stars - cost;
-  const result = await api('updateBalance', { userId: currentUser.UserID, newBalance });
+  btn.textContent = '⟳ Processing...';
+  
+  const result = await api('claimReward', { 
+    userId: currentUser.UserID, 
+    cashoutRowNum: rowNum 
+  });
+  
   btn.disabled = false;
+  btn.textContent = 'REDEEM';
 
   if (result.success) {
-    userData.stars = newBalance;
+    userData.stars = result.newBalance;
     updateUI();
-    showFeedback('shopFeedback', `✅ ${name} redeemed! New balance: ${newBalance.toFixed(2)} STARS`, 'success');
+    showFeedback('shopFeedback', `✅ ${name} redeemed! New balance: ${result.newBalance.toFixed(2)} STARS`, 'success');
+    loadShop();
   } else {
-    showFeedback('shopFeedback', '❌ Redemption failed — try again', 'error');
+    showFeedback('shopFeedback', `❌ ${escapeHtml(result.error || 'Redemption failed')}`, 'error');
   }
 }
 
-// PROMO CODE
-const promoBtn = document.getElementById('promoBtn');
-if (promoBtn) promoBtn.addEventListener('click', redeemPromo);
-const promoInput = document.getElementById('promoInput');
-if (promoInput) promoInput.addEventListener('keydown', e => { if (e.key === 'Enter') redeemPromo(); });
-
 async function redeemPromo() {
-  if (!currentUser) { showFeedback('promoFeedback', '🔐 Login first to redeem a promo code', 'error'); return; }
+  if (!currentUser) { 
+    showFeedback('promoFeedback', '🔐 Login first to redeem a promo code', 'error'); 
+    return; 
+  }
+  
   const input = document.getElementById('promoInput');
   if (!input) return;
-  const code  = input.value.trim().toUpperCase();
-  if (!code) { showFeedback('promoFeedback', '⚠ Enter a promo code first', 'warning'); return; }
+  const code = input.value.trim().toUpperCase();
+  if (!code) { 
+    showFeedback('promoFeedback', '⚠ Enter a promo code first', 'warning'); 
+    return; 
+  }
+  
   const btn = document.getElementById('promoBtn');
   if (btn) {
     btn.disabled = true; 
     btn.textContent = '⟳ Checking...';
   }
+  
   const result = await api('redeemPromo', { userId: currentUser.UserID, code });
+  
   if (btn) {
     btn.disabled = false; 
     btn.textContent = 'APPLY CODE';
   }
+  
   if (result.success) {
     const earned = parseFloat(result.earned || 0);
-    userData.stars += earned;
+    userData.stars = result.newBalance;
     updateUI();
     input.value = '';
     showFeedback('promoFeedback', `🎉 Code ${escapeHtml(code)} accepted! +${earned.toFixed(2)} STARS added.`, 'success');
@@ -832,7 +814,6 @@ async function redeemPromo() {
   }
 }
 
-// QUIZ
 async function loadQuiz() {
   if (!currentUser) return;
   const container = document.getElementById('quizContainer');
@@ -870,80 +851,96 @@ async function submitQuiz() {
   const correctCount = (c1?1:0)+(c2?1:0)+(c3?1:0);
   const earned = correctCount * REWARD_PER_CORRECT;
   const newCorrectTotal = userData.correct + correctCount;
-  const newWrongTotal   = userData.wrong + (3 - correctCount);
+  const newWrongTotal = userData.wrong + (3 - correctCount);
   const newBalance = userData.stars + earned;
   const acc = calcAccuracy(newCorrectTotal, newWrongTotal);
-  const newStatus = calcStatus(acc);
+  const newStatus = acc !== null && acc < 30 ? 'Locked' : (acc !== null && acc < 60 ? 'Warning' : 'Active');
   const result = await api('submitQuiz', { userId: currentUser.UserID, quizRowNum: currentQuiz.rowNum, correctCount, earned, newCorrectTotal, newWrongTotal, newBalance, newStatus });
   if (!result.success) { 
     if (btn) {
       btn.disabled=false; 
       btn.textContent='▶ SUBMIT QUIZ';
     }
+    showFeedback('quizResultArea', '❌ Failed to submit quiz', 'error');
     return; 
   }
-  userData.stars=newBalance; 
-  userData.correct=newCorrectTotal; 
-  userData.wrong=newWrongTotal; 
-  userData.quizzes=Math.round((newCorrectTotal+newWrongTotal)/3); 
-  userData.status=newStatus;
+  userData.stars = newBalance; 
+  userData.correct = newCorrectTotal; 
+  userData.wrong = newWrongTotal; 
+  userData.quizzes = Math.round((newCorrectTotal+newWrongTotal)/3); 
+  userData.status = newStatus;
   updateUI(); 
   loadLeaderboard();
   const rd = document.getElementById('quizResultArea');
   if (rd) {
-    rd.style.display='block'; 
-    rd.innerHTML=`<strong>RESULT: ${correctCount}/3 CORRECT</strong><br>+${earned.toFixed(2)} STARS | Balance: ${newBalance.toFixed(2)}`;
+    rd.style.display = 'block'; 
+    rd.innerHTML = `<strong>RESULT: ${correctCount}/3 CORRECT</strong><br>+${earned.toFixed(2)} STARS | Balance: ${newBalance.toFixed(2)}`;
+    rd.className = 'quiz-result ce-success';
   }
-  ['quizAns1','quizAns2','quizAns3'].forEach(id=>{let el=document.getElementById(id); if(el) el.disabled=true;});
-  setTimeout(loadQuiz,3000);
+  ['quizAns1','quizAns2','quizAns3'].forEach(id => { let el = document.getElementById(id); if(el) el.disabled = true; });
+  setTimeout(() => { loadQuiz(); }, 3000);
 }
 
 async function loadLeaderboard() { 
   if(!currentUser) return; 
-  const c=document.getElementById('leaderboardContainer'); 
+  const c = document.getElementById('leaderboardContainer'); 
   if(!c) return;
-  c.innerHTML='<div class="ce-alert">⟳ Loading...</div>'; 
-  const result=await api('getLeaderboard'); 
-  if(!result.success||!result.leaderboard){
-    c.innerHTML='<div class="ce-alert ce-error">❌ Failed</div>';
+  c.innerHTML = '<div class="ce-alert">⟳ Loading...</div>'; 
+  const result = await api('getLeaderboard'); 
+  if(!result.success || !result.leaderboard){
+    c.innerHTML = '<div class="ce-alert ce-error">❌ Failed to load leaderboard</div>';
     return;
   } 
-  c.innerHTML=`<div class="lb-row lb-header"><span>RANK</span><span>USER</span><span>STARS</span><span>ACC</span></div>${result.leaderboard.map(u=>{const acc=calcAccuracy(u.correct,u.wrong); return `<div class="lb-row${u.userId===currentUser.UserID?' lb-self':''}"><span class="lb-rank">#${u.rank}</span><span>${escapeHtml(u.userId)}${u.userId===currentUser.UserID?' <span style="color:#facc15;font-size:0.7rem;">◀ YOU</span>':''}</span><span class="lb-stars">${Math.floor(u.stars)} ⭐</span><span class="lb-acc">${acc!==null?acc+'%':'—'}</span></div>`; }).join('')}`;
+  if(result.leaderboard.length === 0) {
+    c.innerHTML = '<div class="ce-alert">No users on leaderboard yet</div>';
+    return;
+  }
+  c.innerHTML = `<div class="lb-row lb-header"><span>RANK</span><span>USER</span><span>STARS</span><span>ACC</span></div>${
+    result.leaderboard.map(u => {
+      const acc = calcAccuracy(u.correct, u.wrong); 
+      return `<div class="lb-row${u.userId === currentUser.UserID ? ' lb-self' : ''}">
+        <span class="lb-rank">#${u.rank}</span>
+        <span>${escapeHtml(u.userId)}${u.userId === currentUser.UserID ? ' <span style="color:#facc15;font-size:0.7rem;">◀ YOU</span>' : ''}</span>
+        <span class="lb-stars">${Math.floor(u.stars)} ⭐</span>
+        <span class="lb-acc">${acc !== null ? acc+'%' : '—'}</span>
+      </div>`; 
+    }).join('')
+  }`;
 }
 
 function navigateTo(target) { 
-  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n=>n.classList.toggle('active', n.dataset.target===target)); 
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); 
+  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.target === target);
+  }); 
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
   const sec = document.getElementById('section-'+target);
   if (sec) sec.classList.add('active'); 
-  if(target==='leaders'&&currentUser) loadLeaderboard(); 
-  if(target==='shop'&&currentUser) {
-    const shopGrid = document.getElementById('shopGrid');
-    if (shopGrid && shopGrid.classList.contains('shop-loading')) loadShop();
-  }
+  if(target === 'leaders' && currentUser) loadLeaderboard(); 
+  if(target === 'shop' && currentUser) loadShop();
 }
 
-document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item=>item.addEventListener('click',()=>navigateTo(item.dataset.target)));
+document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.target));
+});
 
-function bindLoginBtn(){
+function bindLoginBtn() {
   const loginBtn = document.getElementById('loginBtn');
   if (loginBtn) loginBtn.addEventListener('click', doLogin);
 }
 
-const logoutBtn = document.getElementById('logoutBtn');
-if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
-const refreshBtn = document.getElementById('refreshBtn');
-if (refreshBtn) refreshBtn.addEventListener('click', doRefresh);
-const loginBtnProfile = document.getElementById('loginBtnProfile');
-if (loginBtnProfile) loginBtnProfile.addEventListener('click', doLogin);
+document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+document.getElementById('refreshBtn')?.addEventListener('click', doRefresh);
+document.getElementById('loginBtnProfile')?.addEventListener('click', doLogin);
+document.getElementById('promoBtn')?.addEventListener('click', redeemPromo);
+document.getElementById('promoInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') redeemPromo(); });
 
 bindLoginBtn();
 
-function updateClock(){
+function updateClock() {
   const clock = document.getElementById('liveClock');
   if (clock) clock.textContent = new Date().toUTCString().replace('GMT','UTC').slice(0,25);
 }
-setInterval(updateClock,1000); 
+setInterval(updateClock, 1000); 
 updateClock(); 
 updateUI();
 </script>
